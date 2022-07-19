@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "axios": "^0.27.2",
+    "node-gzip": "^1.1.2",
+    "ps-list": "^8.1.0",
+    "sqlite3": "^5.0.9",
+    "vdf-parser": "^1.2.0"
+  },
+  "name": "game-detect",
+  "version": "1.0.0",
+  "description": "A node.js library for detecting what game the user is playing",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/Reapimus/game-detect"
+  },
+  "keywords": [
+    "game",
+    "detection"
+  ],
+  "author": "Reapimus",
+  "license": "MIT"
+}
