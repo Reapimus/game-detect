@@ -41,7 +41,7 @@ export default async function getCurrentSteamGame(noHTTP) {
         if (curApp) {
             if (noHTTP) {
                 return {
-                    detectionid: `steam-${appid}`,
+                    detectionid: `steam-${curApp}`,
                     appid: curApp,
                     name: info.name,
                     description: '',
@@ -55,7 +55,7 @@ export default async function getCurrentSteamGame(noHTTP) {
                 const info = await getSteamGameInfo(curApp);
                 if (info) {
                     return {
-                        detectionid: `steam-${appid}`,
+                        detectionid: `steam-${curApp}`,
                         appid: curApp,
                         name: info.name,
                         description: info.short_description,
