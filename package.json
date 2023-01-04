@@ -7,7 +7,7 @@
     "vdf-parser": "^1.2.0"
   },
   "name": "game-detect",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A node.js library for detecting what game the user is playing",
   "main": "index.js",
   "type": "module",
