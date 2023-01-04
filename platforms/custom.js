@@ -21,9 +21,9 @@ async function getRobloxGame(proc, noHTTP) {
                     icon: '',
                 }
             } else {
-                const universeReq = await axios.get(`https://api.roblox.com/universes/get-universe-containing-place?placeid=${placeId}`);
+                const universeReq = await axios.get(`https://apis.roblox.com/universes/v1/places/${placeId}/universe`);
                 if (universeReq.status == 200) {
-                    const universeId = universeReq.data.UniverseId;
+                    const universeId = universeReq.data.universeId;
                     const iconReq = await axios.get(`https://thumbnails.roblox.com/v1/games/icons?universeIds=${universeId}&size=50x50&format=png`);
                     const coverReq = await axios.get(`https://thumbnails.roblox.com/v1/games/multiget/thumbnails?universeIds=${universeId}&size=768x432&format=png&countPerUniverse=1`);
                     const infoReq = await axios.get(`https://games.roblox.com/v1/games?universeIds=${universeId}`);
