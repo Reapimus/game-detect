@@ -43,7 +43,7 @@ export default async function getCurrentSteamGame(noHTTP) {
                 return {
                     detectionid: `steam-${curApp}`,
                     appid: curApp,
-                    name: info.name,
+                    name: toString(curApp),
                     description: '',
                     requiredAge: '',
                     developers: ['Unknown'],
