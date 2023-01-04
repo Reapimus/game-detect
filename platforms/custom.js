@@ -31,10 +31,10 @@ async function getRobloxGame(proc, noHTTP) {
                     if (iconReq.status == 200 && coverReq.status == 200 && infoReq.status == 200) {
                         const info = infoReq.data.data[0];
                         return {
-                            detectionid: `roblox-${placeReg}`,
+                            detectionid: `roblox-${placeId}`,
                             appid: 0,
                             name: 'Roblox',
-                            robloxPlace: placeReg,
+                            robloxPlace: placeId,
                             robloxGame: universeId,
                             details: info.name,
                             description: info.description || '',
