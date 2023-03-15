@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import vdf from 'vdf-parser';
 import { execa } from 'execa';
@@ -28,10 +28,12 @@ export default async function getCurrentSteamGame(noHTTP) {
                 curApp = Number(matches[1]);
                 break;
             case 'linux':
+                if (!existsSync(path.join(`${process.env.HOME}/.steam`, 'registry.vdf'))) return null;
                 var steamRegistry = vdf.parse(readFileSync(path.join(`${process.env.HOME}/.steam`, 'registry.vdf'), 'utf-8'));
                 curApp = steamRegistry.Registry.HKCU.Software.Valve.Steam.RunningAppID;
                 break;
             case 'darwin':
+                if (!existsSync(path.join(`${process.env.HOME}/Library/Application Support/Steam`, 'registry.vdf'))) return null;
                 var steamRegistry = vdf.parse(readFileSync(path.join(`${process.env.HOME}/Library/Application Support/Steam`, 'registry.vdf'), 'utf-8'));
                 curApp = steamRegistry.Registry.HKCU.Software.Valve.Steam.RunningAppID;
                 break;
