@@ -1,11 +1,12 @@
 import axios from 'axios';
 import { readFileSync } from 'fs';
 import path from 'path';
-import vdf from 'vdf-parser'
+import vdf from 'vdf-parser';
+import { execa } from 'execa';
 
 const REG_TREE_PATH = 'HKCU\\Software\\Valve\\Steam';
 const getRegExePath = () => process.platform === 'win32' && process.env.windir != null
-    ? path_1.default.join(process.env.windir, 'System32', 'reg.exe')
+    ? path.join(process.env.windir, 'System32', 'reg.exe')
     : 'REG';
 
 async function getSteamGameInfo(appid) {
@@ -20,10 +21,10 @@ export default async function getCurrentSteamGame(noHTTP) {
         var curApp;
         switch (process.platform) {
             case 'win32':
-                const output = await execa_1.default.stdout(getRegExePath(), ['QUERY', REG_TREE_PATH, '/v', 'SteamPath'], { cwd: undefined });
+                const output = (await execa(getRegExePath(), ['QUERY', REG_TREE_PATH, '/v', 'SteamPath'], { cwd: undefined })).stdout;
                 const matches = output.match(/RunningAppID\s+[A-Z_]+\s+(.+)/);
                 if (!matches || matches[1] === '')
-                    return null
+                    return null;
                 curApp = Number(matches[1]);
                 break;
             case 'linux':
@@ -35,7 +36,7 @@ export default async function getCurrentSteamGame(noHTTP) {
                 curApp = steamRegistry.Registry.HKCU.Software.Valve.Steam.RunningAppID;
                 break;
             default:
-                throw new Error(`No steam support for ${process.platform}`);
+                return null;
         }
 
         if (curApp) {
@@ -74,7 +75,6 @@ export default async function getCurrentSteamGame(noHTTP) {
         }
     }
     catch (err) {
-        console.log(err);
         return null
     }
 }

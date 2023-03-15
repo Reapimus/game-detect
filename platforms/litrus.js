@@ -1,5 +1,6 @@
 import sqlite3 from "sqlite3";
 import axios from "axios";
+import fs from "fs";
 
 const sqlite = sqlite3.verbose();
 var db;
@@ -16,6 +17,7 @@ async function getGames() {
 
 export default async function getLitrusGame(proc, noHTTP) {
     try {
+        if (!fs.existsSync(`${process.env.HOME}/.local/share/lutris/pga.db`)) return null;
         if (db == null) {
             db = new sqlite.Database(`${process.env.HOME}/.local/share/lutris/pga.db`, sqlite.OPEN_READONLY);
         }

@@ -1,5 +1,5 @@
 import path from 'path';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import axios from 'axios';
 
 export default async function getGamejoltGame(proc, noHTTP) {
@@ -16,8 +16,9 @@ export default async function getGamejoltGame(proc, noHTTP) {
                 dataDir = `${process.env.HOME}/Library/Application Support/game-jolt-client/Default`;
                 break;
             default:
-                throw new Error(`No gamejolt support for ${process.platform}`);
+                return null; // No support for this platform, return null instead
         }
+        if (!existsSync(dataDir)) return null;
         
         const packagesDict = JSON.parse(readFileSync(path.join(dataDir, 'packages.wttf')));
         const gamesDict = JSON.parse(readFileSync(path.join(dataDir, 'games.wttf')));

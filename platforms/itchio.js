@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import path from 'path';
 import escapeRegExp from './util.js';
 
@@ -43,11 +43,12 @@ export default async function getItchIoGame(proc) {
                 }
                 break;
             default:
-                throw new Error(`No itch.io support for ${process.platform}`);
+                return null;
         }
         if (installLocations) {
             for (let i = 0; i < installLocations.length; i++) {
                 var loc = installLocations[i];
+                if (!existsSync(loc)) return null
                 if (proc.cmd.includes(loc)) {
                     // It's an itch.io game, continue
                     var gameBaseFolder = RegExp(`(${escapeRegExp(loc)}/[a-zA-z0-9\-\_ &]+)/`).exec(proc.cmd);
