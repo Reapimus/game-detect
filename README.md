@@ -47,6 +47,6 @@ Whether or not to send HTTP requests to fill in information that isn't provided 
 | Steam     | ❔      | ❔    | ✔️    |
 | Itch.io   | ❔      | ❔    | ✔️    |
 | Gamejolt  | ❔      | ❔    | ✔️    |
-| Litrus    | ❌      | ❌    | ✔️    |
+| Lutris    | ❌      | ❌    | ✔️    |
 | Roblox    | ✔️      | ✔️    | ✔️    |
 | Minecraft | ✔️      | ✔️    | ✔️    |
