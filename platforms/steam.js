@@ -21,12 +21,13 @@ export default async function getCurrentSteamGame(noHTTP) {
         var curApp;
         switch (process.platform) {
             case 'win32':
-                const output = (await execa(getRegExePath(), ['QUERY', REG_TREE_PATH, '/v', 'SteamPath'], { cwd: undefined })).stdout;
-                const matches = output.match(/RunningAppID\s+[A-Z_]+\s+(.+)/);
-                if (!matches || matches[1] === '')
+                const output = (await execa(getRegExePath(), ['QUERY', REG_TREE_PATH, '/v', 'RunningAppId'], { cwd: undefined })).stdout;
+                const matches = output.match(/RunningAppId\s+REG_DWORD\s+0x([0-9a-fA-F]+)/);
+                if (!matches || matches[1] === '') {
                     return null;
-                curApp = Number(matches[1]);
-                break;
+                }
+                curApp = parseInt(matches[1], 16);
+                break;            
             case 'linux':
                 if (!existsSync(path.join(`${process.env.HOME}/.steam`, 'registry.vdf'))) return null;
                 var steamRegistry = vdf.parse(readFileSync(path.join(`${process.env.HOME}/.steam`, 'registry.vdf'), 'utf-8'));
