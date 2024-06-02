@@ -1,9 +1,17 @@
 import axios from 'axios';
 
+function pName(proc) {
+    if (proc.cmd) {
+        return proc.cmd;
+    } else {
+        return proc.name;
+    }
+}
+
 async function getRobloxGame(proc, noHTTP) {
-    if (proc.cmd.toLowerCase().includes('robloxplayerbeta')) {
+    if (pName(proc).toLowerCase().includes('robloxplayerbeta')) {
         // Detected the Roblox game client, get further info
-        var placeReg = RegExp(`&placeId=([0-9]+)`).exec(proc.cmd);
+        var placeReg = RegExp(`&placeId=([0-9]+)`).exec(pName(proc));
         if (placeReg) {
             const placeId = placeReg[1];
             if (noHTTP) {
@@ -57,7 +65,7 @@ async function getRobloxGame(proc, noHTTP) {
 
 async function getMinecraftGame(proc) {
     // Perhaps in the future can try and find a way to show additional information about the game (mode, server, etc)?
-    const lower = proc.cmd.toLowerCase();
+    const lower = pName(proc).toLowerCase();
     if (lower.includes('minecraft')) {
         var name = 'Minecraft';
         if (lower.includes('legends')) {
