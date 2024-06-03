@@ -1,4 +1,8 @@
 import axios from 'axios';
+import { execa } from 'execa';
+
+import fs from 'fs';
+import readline from 'readline';
 
 function pName(proc) {
     if (proc.cmd) {
@@ -11,9 +15,62 @@ function pName(proc) {
 async function getRobloxGame(proc, noHTTP) {
     if (pName(proc).toLowerCase().includes('robloxplayerbeta')) {
         // Detected the Roblox game client, get further info
-        var placeReg = RegExp(`&placeId=([0-9]+)`).exec(pName(proc));
+        if (process.platform === 'win32') {
+            // // Windows-specific code to get the placeId from command line arguments using wmic
+            // const output = (await execa('wmic', ['process', 'where', `processid=${proc.pid}`, 'get', 'commandline'], { cwd: undefined })).stdout;
+            // var placeReg = /%26placeId%3D(\d+)/.exec(output);
+
+            // Better method to get latest placeId always, or null if not in game.
+            function getCurrentPlaceId() {
+                return new Promise((resolve, reject) => {
+                    const logDirectory = `${process.env.LOCALAPPDATA}/Roblox/logs`;
+                    const logFiles = fs.readdirSync(logDirectory).filter(file => file.endsWith('.log'));
+                    
+                    if (logFiles.length > 0) {
+                        const latestLogFile = logFiles.reduce((prev, curr) => (fs.statSync(`${logDirectory}/${curr}`).mtimeMs > fs.statSync(`${logDirectory}/${prev}`).mtimeMs ? curr : prev));
+                        const logLocation = `${logDirectory}/${latestLogFile}`;
+            
+                        try {
+                            const logData = fs.readFileSync(logLocation, 'utf-8').split('\n').reverse(); // Read and split lines, then reverse order
+            
+                            let placeId = null;
+                            let disconnectFound = false;
+            
+                            for (const line of logData) {
+                                if (placeId || disconnectFound) {
+                                    resolve(placeId);
+                                    return;
+                                }
+            
+                                if (line.includes('[FLog::Network] Time to disconnect replication data:')) {
+                                    disconnectFound = true;
+                                }
+            
+                                if (line.includes('Report game_join_loadtime: placeid:')) {
+                                    const match = line.match(/Report game_join_loadtime: placeid:(\d+)/);
+                                    if (match) {
+                                        placeId = match[1];
+                                    }
+                                }
+                            }
+            
+                            resolve(placeId ? placeId : (disconnectFound ? null : null));
+                        } catch (err) {
+                            resolve(null);
+                        }
+                    } else {
+                        resolve(null);
+                    }
+                });
+            }
+
+            var placeReg = (await getCurrentPlaceId()).trim();
+        } else {
+            var placeReg = RegExp(`&placeId=([0-9]+)`).exec(pName(proc));
+            placeReg = placeReg[1];
+        }
         if (placeReg) {
-            const placeId = placeReg[1];
+            const placeId = placeReg;
             if (noHTTP) {
                 return {
                     detectionid: `roblox-${placeReg}`,
@@ -57,8 +114,22 @@ async function getRobloxGame(proc, noHTTP) {
                 }
             }
             return null;
+        } else {
+            // Return Roblox found, no/unknown Place
+            return {
+                detectionid: `roblox`,
+                appid: 0,
+                name: 'Roblox',
+                robloxPlace: placeReg,
+                details: '',
+                description: '',
+                requiredAge: 6,
+                developers: ['Roblox'],
+                publishers: ['Roblox'],
+                cover: '',
+                icon: '',
+            }
         }
-        return null;
     }
     return null;
 }
