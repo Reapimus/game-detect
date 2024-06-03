@@ -67,9 +67,10 @@ async function getRobloxGame(proc, noHTTP) {
             var placeReg = (await getCurrentPlaceId()).trim();
         } else {
             var placeReg = RegExp(`&placeId=([0-9]+)`).exec(pName(proc));
+            placeReg = placeReg[1];
         }
         if (placeReg) {
-            const placeId = placeReg[1];
+            const placeId = placeReg;
             if (noHTTP) {
                 return {
                     detectionid: `roblox-${placeReg}`,
